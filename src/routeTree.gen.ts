@@ -9,50 +9,67 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
+import { Route as VoterRouteImport } from './routes/_voter'
+import { Route as GateRouteImport } from './routes/gate'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const VoterRoute = VoterRouteImport.update({
+  id: '/_voter',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GateRoute = GateRouteImport.update({
+  id: '/gate',
+  path: '/gate',
   getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
+  '/': typeof VoterRoute
+  '/gate': typeof GateRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
+  '/': typeof VoterRoute
+  '/gate': typeof GateRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
+  '/_voter': typeof VoterRoute
+  '/gate': typeof GateRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/gate'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/gate'
+  id: '__root__' | '/_voter' | '/gate'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
+  VoterRoute: typeof VoterRoute
+  GateRoute: typeof GateRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
+    '/_voter': {
+      id: '/_voter'
+      path: ''
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+      preLoaderRoute: typeof VoterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/gate': {
+      id: '/gate'
+      path: '/gate'
+      fullPath: '/gate'
+      preLoaderRoute: typeof GateRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
+  VoterRoute: VoterRoute,
+  GateRoute: GateRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
