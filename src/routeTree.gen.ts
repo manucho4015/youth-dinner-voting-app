@@ -15,6 +15,7 @@ import { Route as GateRouteImport } from './routes/gate'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminAdminIndexRouteImport } from './routes/_admin/admin/index'
 import { Route as AdminAdminCategoriesRouteImport } from './routes/_admin/admin/categories'
+import { Route as AdminAdminNomineesRouteImport } from './routes/_admin/admin/nominees'
 
 const AdminRoute = AdminRouteImport.update({
   id: '/_admin',
@@ -44,12 +45,18 @@ const AdminAdminCategoriesRoute = AdminAdminCategoriesRouteImport.update({
   path: '/admin/categories',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminAdminNomineesRoute = AdminAdminNomineesRouteImport.update({
+  id: '/admin/nominees',
+  path: '/admin/nominees',
+  getParentRoute: () => AdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof VoterRoute
   '/gate': typeof GateRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/categories': typeof AdminAdminCategoriesRoute
+  '/admin/nominees': typeof AdminAdminNomineesRoute
   '/admin/': typeof AdminAdminIndexRoute
 }
 export interface FileRoutesByTo {
@@ -57,6 +64,7 @@ export interface FileRoutesByTo {
   '/gate': typeof GateRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/categories': typeof AdminAdminCategoriesRoute
+  '/admin/nominees': typeof AdminAdminNomineesRoute
   '/admin': typeof AdminAdminIndexRoute
 }
 export interface FileRoutesById {
@@ -66,13 +74,26 @@ export interface FileRoutesById {
   '/gate': typeof GateRoute
   '/admin/login': typeof AdminLoginRoute
   '/_admin/admin/categories': typeof AdminAdminCategoriesRoute
+  '/_admin/admin/nominees': typeof AdminAdminNomineesRoute
   '/_admin/admin/': typeof AdminAdminIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/gate' | '/admin/login' | '/admin/categories' | '/admin/'
+  fullPaths:
+    | '/'
+    | '/gate'
+    | '/admin/login'
+    | '/admin/categories'
+    | '/admin/nominees'
+    | '/admin/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/gate' | '/admin/login' | '/admin/categories' | '/admin'
+  to:
+    | '/'
+    | '/gate'
+    | '/admin/login'
+    | '/admin/categories'
+    | '/admin/nominees'
+    | '/admin'
   id:
     | '__root__'
     | '/_admin'
@@ -80,6 +101,7 @@ export interface FileRouteTypes {
     | '/gate'
     | '/admin/login'
     | '/_admin/admin/categories'
+    | '/_admin/admin/nominees'
     | '/_admin/admin/'
   fileRoutesById: FileRoutesById
 }
@@ -134,16 +156,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAdminCategoriesRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/_admin/admin/nominees': {
+      id: '/_admin/admin/nominees'
+      path: '/admin/nominees'
+      fullPath: '/admin/nominees'
+      preLoaderRoute: typeof AdminAdminNomineesRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
 
 interface AdminRouteChildren {
   AdminAdminCategoriesRoute: typeof AdminAdminCategoriesRoute
+  AdminAdminNomineesRoute: typeof AdminAdminNomineesRoute
   AdminAdminIndexRoute: typeof AdminAdminIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminAdminCategoriesRoute: AdminAdminCategoriesRoute,
+  AdminAdminNomineesRoute: AdminAdminNomineesRoute,
   AdminAdminIndexRoute: AdminAdminIndexRoute,
 }
 
