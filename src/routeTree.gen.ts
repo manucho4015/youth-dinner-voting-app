@@ -9,9 +9,17 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as AdminRouteImport } from './routes/_admin'
 import { Route as VoterRouteImport } from './routes/_voter'
 import { Route as GateRouteImport } from './routes/gate'
+import { Route as AdminLoginRouteImport } from './routes/admin.login'
+import { Route as AdminAdminIndexRouteImport } from './routes/_admin/admin/index'
+import { Route as AdminAdminCategoriesRouteImport } from './routes/_admin/admin/categories'
 
+const AdminRoute = AdminRouteImport.update({
+  id: '/_admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const VoterRoute = VoterRouteImport.update({
   id: '/_voter',
   getParentRoute: () => rootRouteImport,
@@ -21,35 +29,76 @@ const GateRoute = GateRouteImport.update({
   path: '/gate',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminLoginRoute = AdminLoginRouteImport.update({
+  id: '/admin/login',
+  path: '/admin/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminAdminIndexRoute = AdminAdminIndexRouteImport.update({
+  id: '/admin/',
+  path: '/admin/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminAdminCategoriesRoute = AdminAdminCategoriesRouteImport.update({
+  id: '/admin/categories',
+  path: '/admin/categories',
+  getParentRoute: () => AdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof VoterRoute
   '/gate': typeof GateRoute
+  '/admin/login': typeof AdminLoginRoute
+  '/admin/categories': typeof AdminAdminCategoriesRoute
+  '/admin/': typeof AdminAdminIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof VoterRoute
   '/gate': typeof GateRoute
+  '/admin/login': typeof AdminLoginRoute
+  '/admin/categories': typeof AdminAdminCategoriesRoute
+  '/admin': typeof AdminAdminIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
+  '/_admin': typeof AdminRouteWithChildren
   '/_voter': typeof VoterRoute
   '/gate': typeof GateRoute
+  '/admin/login': typeof AdminLoginRoute
+  '/_admin/admin/categories': typeof AdminAdminCategoriesRoute
+  '/_admin/admin/': typeof AdminAdminIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/gate'
+  fullPaths: '/' | '/gate' | '/admin/login' | '/admin/categories' | '/admin/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/gate'
-  id: '__root__' | '/_voter' | '/gate'
+  to: '/' | '/gate' | '/admin/login' | '/admin/categories' | '/admin'
+  id:
+    | '__root__'
+    | '/_admin'
+    | '/_voter'
+    | '/gate'
+    | '/admin/login'
+    | '/_admin/admin/categories'
+    | '/_admin/admin/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
+  AdminRoute: typeof AdminRouteWithChildren
   VoterRoute: typeof VoterRoute
   GateRoute: typeof GateRoute
+  AdminLoginRoute: typeof AdminLoginRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/_admin': {
+      id: '/_admin'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_voter': {
       id: '/_voter'
       path: ''
@@ -64,12 +113,47 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GateRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/login': {
+      id: '/admin/login'
+      path: '/admin/login'
+      fullPath: '/admin/login'
+      preLoaderRoute: typeof AdminLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_admin/admin/': {
+      id: '/_admin/admin/'
+      path: '/admin'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminAdminIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/_admin/admin/categories': {
+      id: '/_admin/admin/categories'
+      path: '/admin/categories'
+      fullPath: '/admin/categories'
+      preLoaderRoute: typeof AdminAdminCategoriesRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
 
+interface AdminRouteChildren {
+  AdminAdminCategoriesRoute: typeof AdminAdminCategoriesRoute
+  AdminAdminIndexRoute: typeof AdminAdminIndexRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminAdminCategoriesRoute: AdminAdminCategoriesRoute,
+  AdminAdminIndexRoute: AdminAdminIndexRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
+  AdminRoute: AdminRouteWithChildren,
   VoterRoute: VoterRoute,
   GateRoute: GateRoute,
+  AdminLoginRoute: AdminLoginRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
