@@ -12,10 +12,12 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AdminRouteImport } from './routes/_admin'
 import { Route as VoterRouteImport } from './routes/_voter'
 import { Route as GateRouteImport } from './routes/gate'
+import { Route as VoterIndexRouteImport } from './routes/_voter/index'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminAdminIndexRouteImport } from './routes/_admin/admin/index'
 import { Route as AdminAdminCategoriesRouteImport } from './routes/_admin/admin/categories'
 import { Route as AdminAdminNomineesRouteImport } from './routes/_admin/admin/nominees'
+import { Route as VoterVoteCategoryIdRouteImport } from './routes/_voter/vote.$categoryId'
 
 const AdminRoute = AdminRouteImport.update({
   id: '/_admin',
@@ -29,6 +31,11 @@ const GateRoute = GateRouteImport.update({
   id: '/gate',
   path: '/gate',
   getParentRoute: () => rootRouteImport,
+} as any)
+const VoterIndexRoute = VoterIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => VoterRoute,
 } as any)
 const AdminLoginRoute = AdminLoginRouteImport.update({
   id: '/admin/login',
@@ -50,31 +57,40 @@ const AdminAdminNomineesRoute = AdminAdminNomineesRouteImport.update({
   path: '/admin/nominees',
   getParentRoute: () => AdminRoute,
 } as any)
+const VoterVoteCategoryIdRoute = VoterVoteCategoryIdRouteImport.update({
+  id: '/vote/$categoryId',
+  path: '/vote/$categoryId',
+  getParentRoute: () => VoterRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof VoterRoute
+  '/': typeof VoterIndexRoute
   '/gate': typeof GateRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/categories': typeof AdminAdminCategoriesRoute
   '/admin/nominees': typeof AdminAdminNomineesRoute
+  '/vote/$categoryId': typeof VoterVoteCategoryIdRoute
   '/admin/': typeof AdminAdminIndexRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof VoterRoute
+  '/': typeof VoterIndexRoute
   '/gate': typeof GateRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/categories': typeof AdminAdminCategoriesRoute
   '/admin/nominees': typeof AdminAdminNomineesRoute
+  '/vote/$categoryId': typeof VoterVoteCategoryIdRoute
   '/admin': typeof AdminAdminIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_admin': typeof AdminRouteWithChildren
-  '/_voter': typeof VoterRoute
+  '/_voter': typeof VoterRouteWithChildren
   '/gate': typeof GateRoute
   '/admin/login': typeof AdminLoginRoute
+  '/_voter/': typeof VoterIndexRoute
   '/_admin/admin/categories': typeof AdminAdminCategoriesRoute
   '/_admin/admin/nominees': typeof AdminAdminNomineesRoute
+  '/_voter/vote/$categoryId': typeof VoterVoteCategoryIdRoute
   '/_admin/admin/': typeof AdminAdminIndexRoute
 }
 export interface FileRouteTypes {
@@ -85,6 +101,7 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/admin/categories'
     | '/admin/nominees'
+    | '/vote/$categoryId'
     | '/admin/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -93,6 +110,7 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/admin/categories'
     | '/admin/nominees'
+    | '/vote/$categoryId'
     | '/admin'
   id:
     | '__root__'
@@ -100,14 +118,16 @@ export interface FileRouteTypes {
     | '/_voter'
     | '/gate'
     | '/admin/login'
+    | '/_voter/'
     | '/_admin/admin/categories'
     | '/_admin/admin/nominees'
+    | '/_voter/vote/$categoryId'
     | '/_admin/admin/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   AdminRoute: typeof AdminRouteWithChildren
-  VoterRoute: typeof VoterRoute
+  VoterRoute: typeof VoterRouteWithChildren
   GateRoute: typeof GateRoute
   AdminLoginRoute: typeof AdminLoginRoute
 }
@@ -134,6 +154,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/gate'
       preLoaderRoute: typeof GateRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_voter/': {
+      id: '/_voter/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof VoterIndexRouteImport
+      parentRoute: typeof VoterRoute
     }
     '/admin/login': {
       id: '/admin/login'
@@ -163,6 +190,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAdminNomineesRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/_voter/vote/$categoryId': {
+      id: '/_voter/vote/$categoryId'
+      path: '/vote/$categoryId'
+      fullPath: '/vote/$categoryId'
+      preLoaderRoute: typeof VoterVoteCategoryIdRouteImport
+      parentRoute: typeof VoterRoute
+    }
   }
 }
 
@@ -180,9 +214,21 @@ const AdminRouteChildren: AdminRouteChildren = {
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
+interface VoterRouteChildren {
+  VoterIndexRoute: typeof VoterIndexRoute
+  VoterVoteCategoryIdRoute: typeof VoterVoteCategoryIdRoute
+}
+
+const VoterRouteChildren: VoterRouteChildren = {
+  VoterIndexRoute: VoterIndexRoute,
+  VoterVoteCategoryIdRoute: VoterVoteCategoryIdRoute,
+}
+
+const VoterRouteWithChildren = VoterRoute._addFileChildren(VoterRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRouteWithChildren,
-  VoterRoute: VoterRoute,
+  VoterRoute: VoterRouteWithChildren,
   GateRoute: GateRoute,
   AdminLoginRoute: AdminLoginRoute,
 }
