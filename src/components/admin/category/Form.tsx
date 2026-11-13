@@ -3,6 +3,7 @@ import { useRouter } from '@tanstack/react-router'
 import { createCategory, updateCategory } from '../../../server/admin-categories'
 import { eatInputToIso, isoToEatInput } from '../../../lib/time'
 import type { Category } from '../../../lib/types'
+import DateTimeInput from '../DateTimeInput'
 
 type Props = {
     initial?: Category
@@ -112,23 +113,11 @@ export function CategoryForm({ initial, onDone }: Props) {
             <div className="grid gap-3 sm:grid-cols-2">
                 <div>
                     <label className={labelClass}>Opens (Nairobi time)</label>
-                    <input
-                        required
-                        type="datetime-local"
-                        value={opensAt}
-                        onChange={(e) => setOpensAt(e.target.value)}
-                        className={inputClass}
-                    />
+                    <DateTimeInput required value={opensAt} onChange={setOpensAt} />
                 </div>
                 <div>
                     <label className={labelClass}>Closes (Nairobi time)</label>
-                    <input
-                        required
-                        type="datetime-local"
-                        value={closesAt}
-                        onChange={(e) => setClosesAt(e.target.value)}
-                        className={inputClass}
-                    />
+                    <DateTimeInput required value={closesAt} onChange={setClosesAt} />
                 </div>
             </div>
 
