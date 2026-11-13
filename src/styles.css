@@ -38,6 +38,7 @@
 body {
   min-height: 100vh;
   color: white;
+  color-scheme: dark;
   background-color: var(--color-night-950);
   background-image:
     radial-gradient(
