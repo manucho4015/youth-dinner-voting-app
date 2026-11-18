@@ -1,7 +1,7 @@
 import { createServerFn } from '@tanstack/react-start'
-import { asc, eq } from 'drizzle-orm'
+import { asc, count, eq } from 'drizzle-orm'
 import { db } from '../db'
-import { categories } from '../db/schema'
+import { categories, votes } from '../db/schema'
 import { requireAdmin } from './admin-guard.server'
 
 type CategoryInput = {
@@ -83,6 +83,13 @@ export const deleteCategory = createServerFn({ method: 'POST' })
     .validator((data: { id: string }) => ({ id: requireUuid(data?.id) }))
     .handler(async ({ data }) => {
         await requireAdmin()
+        const [{ total }] = await db
+            .select({ total: count() })
+            .from(votes)
+            .where(eq(votes.categoryId, data.id))
+        if (total > 0) {
+            throw new Error("Can't delete this category: it already has votes.")
+        }
         await db.delete(categories).where(eq(categories.id, data.id))
         return { ok: true as const }
     })
