@@ -15,6 +15,7 @@ import { Route as GateRouteImport } from './routes/gate'
 import { Route as VoterIndexRouteImport } from './routes/_voter/index'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminAdminIndexRouteImport } from './routes/_admin/admin/index'
+import { Route as AdminAdminAssignmentsRouteImport } from './routes/_admin/admin/assignments'
 import { Route as AdminAdminCategoriesRouteImport } from './routes/_admin/admin/categories'
 import { Route as AdminAdminNomineesRouteImport } from './routes/_admin/admin/nominees'
 import { Route as VoterVoteCategoryIdRouteImport } from './routes/_voter/vote.$categoryId'
@@ -47,6 +48,11 @@ const AdminAdminIndexRoute = AdminAdminIndexRouteImport.update({
   path: '/admin/',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminAdminAssignmentsRoute = AdminAdminAssignmentsRouteImport.update({
+  id: '/admin/assignments',
+  path: '/admin/assignments',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminAdminCategoriesRoute = AdminAdminCategoriesRouteImport.update({
   id: '/admin/categories',
   path: '/admin/categories',
@@ -67,6 +73,7 @@ export interface FileRoutesByFullPath {
   '/': typeof VoterIndexRoute
   '/gate': typeof GateRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/assignments': typeof AdminAdminAssignmentsRoute
   '/admin/categories': typeof AdminAdminCategoriesRoute
   '/admin/nominees': typeof AdminAdminNomineesRoute
   '/vote/$categoryId': typeof VoterVoteCategoryIdRoute
@@ -76,6 +83,7 @@ export interface FileRoutesByTo {
   '/': typeof VoterIndexRoute
   '/gate': typeof GateRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/assignments': typeof AdminAdminAssignmentsRoute
   '/admin/categories': typeof AdminAdminCategoriesRoute
   '/admin/nominees': typeof AdminAdminNomineesRoute
   '/vote/$categoryId': typeof VoterVoteCategoryIdRoute
@@ -88,6 +96,7 @@ export interface FileRoutesById {
   '/gate': typeof GateRoute
   '/admin/login': typeof AdminLoginRoute
   '/_voter/': typeof VoterIndexRoute
+  '/_admin/admin/assignments': typeof AdminAdminAssignmentsRoute
   '/_admin/admin/categories': typeof AdminAdminCategoriesRoute
   '/_admin/admin/nominees': typeof AdminAdminNomineesRoute
   '/_voter/vote/$categoryId': typeof VoterVoteCategoryIdRoute
@@ -99,6 +108,7 @@ export interface FileRouteTypes {
     | '/'
     | '/gate'
     | '/admin/login'
+    | '/admin/assignments'
     | '/admin/categories'
     | '/admin/nominees'
     | '/vote/$categoryId'
@@ -108,6 +118,7 @@ export interface FileRouteTypes {
     | '/'
     | '/gate'
     | '/admin/login'
+    | '/admin/assignments'
     | '/admin/categories'
     | '/admin/nominees'
     | '/vote/$categoryId'
@@ -119,6 +130,7 @@ export interface FileRouteTypes {
     | '/gate'
     | '/admin/login'
     | '/_voter/'
+    | '/_admin/admin/assignments'
     | '/_admin/admin/categories'
     | '/_admin/admin/nominees'
     | '/_voter/vote/$categoryId'
@@ -176,6 +188,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAdminIndexRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/_admin/admin/assignments': {
+      id: '/_admin/admin/assignments'
+      path: '/admin/assignments'
+      fullPath: '/admin/assignments'
+      preLoaderRoute: typeof AdminAdminAssignmentsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/_admin/admin/categories': {
       id: '/_admin/admin/categories'
       path: '/admin/categories'
@@ -201,12 +220,14 @@ declare module '@tanstack/react-router' {
 }
 
 interface AdminRouteChildren {
+  AdminAdminAssignmentsRoute: typeof AdminAdminAssignmentsRoute
   AdminAdminCategoriesRoute: typeof AdminAdminCategoriesRoute
   AdminAdminNomineesRoute: typeof AdminAdminNomineesRoute
   AdminAdminIndexRoute: typeof AdminAdminIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminAdminAssignmentsRoute: AdminAdminAssignmentsRoute,
   AdminAdminCategoriesRoute: AdminAdminCategoriesRoute,
   AdminAdminNomineesRoute: AdminAdminNomineesRoute,
   AdminAdminIndexRoute: AdminAdminIndexRoute,
