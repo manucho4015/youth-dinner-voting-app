@@ -7,15 +7,19 @@ import { CategoryForm } from './Form'
 
 export function CategoryCard({ category }: { category: Category }) {
     const router = useRouter()
+    const [error, setError] = useState('')
     const [editing, setEditing] = useState(false)
 
     async function handleDelete() {
-        const ok = window.confirm(
-            `Delete "${category.title}"? Its votes will be deleted too.`,
-        )
+        const ok = window.confirm(`Delete "${category.title}"?`)
         if (!ok) return
-        await deleteCategory({ data: { id: category.id } })
-        await router.invalidate()
+        setError('')
+        try {
+            await deleteCategory({ data: { id: category.id } })
+            await router.invalidate()
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Something went wrong')
+        }
     }
 
     if (editing) {
@@ -67,6 +71,7 @@ export function CategoryCard({ category }: { category: Category }) {
                     Delete
                 </button>
             </div>
+            {error && <p className="mt-3 text-sm text-party-pink">{error}</p>}
         </div>
     )
 }
