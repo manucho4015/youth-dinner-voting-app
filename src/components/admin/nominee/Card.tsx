@@ -79,9 +79,7 @@ export function NomineeCard({ nominee, categories, assignedIds }: Props) {
     }
 
     async function handleDelete() {
-        const ok = window.confirm(
-            `Delete "${nominee.name}"? Their votes will be deleted too.`,
-        )
+        const ok = window.confirm(`Delete "${nominee.name}"?`)
         if (!ok) return
         setBusy(true)
         try {
