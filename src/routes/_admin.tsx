@@ -43,6 +43,12 @@ function AdminLayout() {
             >
               Nominees
             </Link>
+            <Link
+              to="/admin/assignments"
+              className="text-white/70 hover:text-white [&.active]:font-bold [&.active]:text-party-teal"
+            >
+              Assignments
+            </Link>
           </nav>
         </div>
         <button
