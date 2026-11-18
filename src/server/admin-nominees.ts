@@ -1,8 +1,8 @@
 import { createServerFn } from '@tanstack/react-start'
 import { put, del } from '@vercel/blob'
-import { asc, eq, inArray } from 'drizzle-orm'
+import { and, asc, count, eq, inArray } from 'drizzle-orm'
 import { db } from '../db'
-import { categories, categoryNominees, nominees } from '../db/schema'
+import { categories, categoryNominees, nominees, votes } from '../db/schema'
 import { requireAdmin } from './admin-guard.server'
 
 const MAX_IMAGE_BYTES = 4 * 1024 * 1024
@@ -162,6 +162,34 @@ export const setNomineeCategories = createServerFn({ method: 'POST' })
             }
         }
 
+        const current = await db
+            .select({ categoryId: categoryNominees.categoryId })
+            .from(categoryNominees)
+            .where(eq(categoryNominees.nomineeId, nominee.id))
+        const keep = new Set(data.categoryIds)
+        const removed = current
+            .map((c) => c.categoryId)
+            .filter((id) => !keep.has(id))
+
+        if (removed.length > 0) {
+            const voted = await db
+                .select({ title: categories.title })
+                .from(votes)
+                .innerJoin(categories, eq(votes.categoryId, categories.id))
+                .where(
+                    and(
+                        eq(votes.nomineeId, nominee.id),
+                        inArray(votes.categoryId, removed),
+                    ),
+                )
+                .groupBy(categories.id, categories.title)
+            if (voted.length > 0) {
+                throw new Error(
+                    `Can't remove ${nominee.name} from ${voted.map((v) => v.title).join(', ')}: they already have votes there`,
+                )
+            }
+        }
+
         const clear = db
             .delete(categoryNominees)
             .where(eq(categoryNominees.nomineeId, nominee.id))
@@ -191,6 +219,15 @@ export const deleteNominee = createServerFn({ method: 'POST' })
             .from(nominees)
             .where(eq(nominees.id, data.id))
         if (!existing) return { ok: true as const }
+        const [{ total }] = await db
+            .select({ total: count() })
+            .from(votes)
+            .where(eq(votes.nomineeId, data.id))
+        if (total > 0) {
+            throw new Error(
+                `Can't delete ${existing.name}: they already have votes.`,
+            )
+        }
         await db.delete(nominees).where(eq(nominees.id, data.id))
         await removeBlob(existing.imageUrl)
         return { ok: true as const }
