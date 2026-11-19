@@ -1,5 +1,5 @@
 import { createServerFn } from '@tanstack/react-start'
-import { and, asc, count, desc, eq, isNull, lte, sql } from 'drizzle-orm'
+import { and, asc, count, desc, eq, lte, sql } from 'drizzle-orm'
 import { db } from '../db'
 import { categories, categoryNominees, nominees, votes } from '../db/schema'
 import { getStatus } from '../lib/status'
@@ -61,7 +61,7 @@ export const revealCategory = createServerFn({ method: 'POST' })
     .handler(async ({ data }) => {
         await requireAdmin()
 
-        // Only closed categories can be revealed (database clock)
+        // Voting must have opened (database clock). An open category is closed right now.
         const [category] = await db
             .select({
                 id: categories.id,
@@ -72,19 +72,21 @@ export const revealCategory = createServerFn({ method: 'POST' })
             .where(
                 and(
                     eq(categories.id, data.categoryId),
-                    lte(categories.closesAt, sql`now()`),
+                    lte(categories.opensAt, sql`now()`),
                 ),
             )
         if (!category) {
-            throw new Error(
-                "Category not found, or voting hasn't closed yet. Edit its closing time first.",
-            )
+            throw new Error("Category not found, or voting hasn't opened yet.")
         }
 
+        // One atomic update: shut voting if still open, and mark as revealed
         await db
             .update(categories)
-            .set({ revealedAt: sql`now()` })
-            .where(and(eq(categories.id, category.id), isNull(categories.revealedAt)))
+            .set({
+                closesAt: sql`least(${categories.closesAt}, now())`,
+                revealedAt: sql`coalesce(${categories.revealedAt}, now())`,
+            })
+            .where(eq(categories.id, category.id))
 
         const rows = await db
             .select({
