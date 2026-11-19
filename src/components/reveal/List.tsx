@@ -34,12 +34,17 @@ export function RevealList({ categories }: { categories: RevealCategory[] }) {
                         </div>
 
                         <div className="flex shrink-0 items-center gap-3">
-                            {c.status !== 'closed' ? (
+                            {c.status === 'upcoming' ? (
                                 <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-white/60">
-                                    {c.status === 'open' ? 'Voting open' : 'Upcoming'}
+                                    Upcoming
                                 </span>
                             ) : (
                                 <>
+                                    {c.status === 'open' && (
+                                        <span className="rounded-full bg-party-pink/15 px-3 py-1 text-xs font-semibold text-party-pink">
+                                            Voting open
+                                        </span>
+                                    )}
                                     {c.revealed && (
                                         <span className="rounded-full bg-party-teal/15 px-3 py-1 text-xs font-semibold text-party-teal">
                                             Revealed ✓
@@ -48,12 +53,16 @@ export function RevealList({ categories }: { categories: RevealCategory[] }) {
                                     <button
                                         onClick={() => setActiveId(c.id)}
                                         className={
-                                            c.revealed
+                                            c.revealed && c.status === 'closed'
                                                 ? 'rounded-xl border border-white/20 px-4 py-2 text-sm text-white/80 transition active:scale-95'
                                                 : 'rounded-xl bg-gradient-to-r from-gold-400 to-gold-500 px-4 py-2 font-display font-bold text-night-950 transition active:scale-95'
                                         }
                                     >
-                                        {c.revealed ? 'Replay' : 'Reveal 🥁'}
+                                        {c.status === 'open'
+                                            ? 'Close & reveal 🥁'
+                                            : c.revealed
+                                                ? 'Replay'
+                                                : 'Reveal 🥁'}
                                     </button>
                                 </>
                             )}
