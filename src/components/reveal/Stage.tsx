@@ -19,6 +19,7 @@ export function RevealStage({ category, onClose }: Props) {
     const [count, setCount] = useState(3)
     const [shown, setShown] = useState(0)
     const [error, setError] = useState('')
+    const [stillOpen, setStillOpen] = useState(category.status === 'open')
 
     const total = result?.tiers.length ?? 0
     const finished = phase === 'show' && total > 0 && shown >= total
@@ -29,6 +30,7 @@ export function RevealStage({ category, onClose }: Props) {
         try {
             const res = await revealCategory({ data: { categoryId: category.id } })
             setResult(res)
+            setStillOpen(false)
             setShown(0)
             setCount(3)
             setPhase(res.tiers.length === 0 ? 'empty' : 'countdown')
@@ -90,12 +92,21 @@ export function RevealStage({ category, onClose }: Props) {
                     <div className="mt-12">
                         <div className="text-7xl">🥁</div>
                         <p className="mt-4 text-xl text-white/70">The votes are in…</p>
+                        {stillOpen && (
+                            <p className="mx-auto mt-6 max-w-md rounded-xl border border-party-pink/40 bg-party-pink/10 px-4 py-3 text-sm text-party-pink">
+                                Voting is still open. Revealing now will close it immediately.
+                            </p>
+                        )}
                         <button
                             onClick={handleReveal}
                             disabled={phase === 'loading'}
                             className="mt-8 rounded-2xl bg-gradient-to-r from-gold-400 to-gold-500 px-10 py-4 font-display text-2xl font-extrabold text-night-950 transition active:scale-95 disabled:opacity-60"
                         >
-                            {phase === 'loading' ? 'Counting…' : 'Reveal results 🥁'}
+                            {phase === 'loading'
+                                ? 'Counting…'
+                                : stillOpen
+                                    ? 'Close voting & reveal 🥁'
+                                    : 'Reveal results 🥁'}
                         </button>
                         {category.revealed && (
                             <p className="mt-4 text-sm text-white/40">
