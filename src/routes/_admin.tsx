@@ -49,6 +49,12 @@ function AdminLayout() {
             >
               Assignments
             </Link>
+            <Link
+              to="/admin/reveal"
+              className="text-white/70 hover:text-white [&.active]:font-bold [&.active]:text-party-teal"
+            >
+              Reveal
+            </Link>
           </nav>
         </div>
         <button
