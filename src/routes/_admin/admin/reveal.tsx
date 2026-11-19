@@ -17,7 +17,8 @@ function RevealPage() {
                     Reveal results
                 </h2>
                 <p className="mt-1 text-sm text-white/60">
-                    Only categories whose voting has closed can be revealed.
+                    Revealing an open category closes its voting immediately. Categories
+                    that haven't opened yet can't be revealed.
                 </p>
             </div>
             <RevealList categories={categories} />
