@@ -15,6 +15,13 @@ export const Route = createFileRoute('/_admin')({
   component: AdminLayout,
 })
 
+const links = [
+  { to: '/admin/categories', label: 'Categories' },
+  { to: '/admin/nominees', label: 'Nominees' },
+  { to: '/admin/assignments', label: 'Assignments' },
+  { to: '/admin/reveal', label: 'Reveal' },
+] as const
+
 function AdminLayout() {
   const navigate = useNavigate()
 
@@ -24,46 +31,33 @@ function AdminLayout() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl px-5 py-8">
-      <header className="mb-8 flex items-center justify-between">
-        <div className="flex items-center gap-5">
-          <span className="font-display text-2xl font-extrabold text-gold-400">
+    <div className="mx-auto w-full max-w-3xl px-4 py-6 sm:px-5 sm:py-8">
+      <header className="mb-8 space-y-4">
+        <div className="flex items-center justify-between gap-3">
+          <span className="font-display text-xl font-extrabold text-gold-400 sm:text-2xl">
             🎬 Backstage
           </span>
-          <nav className="flex gap-4 text-sm">
-            <Link
-              to="/admin/categories"
-              className="text-white/70 hover:text-white [&.active]:font-bold [&.active]:text-party-teal"
-            >
-              Categories
-            </Link>
-            <Link
-              to="/admin/nominees"
-              className="text-white/70 hover:text-white [&.active]:font-bold [&.active]:text-party-teal"
-            >
-              Nominees
-            </Link>
-            <Link
-              to="/admin/assignments"
-              className="text-white/70 hover:text-white [&.active]:font-bold [&.active]:text-party-teal"
-            >
-              Assignments
-            </Link>
-            <Link
-              to="/admin/reveal"
-              className="text-white/70 hover:text-white [&.active]:font-bold [&.active]:text-party-teal"
-            >
-              Reveal
-            </Link>
-          </nav>
+          <button
+            onClick={handleLogout}
+            className="shrink-0 text-sm text-white/50 hover:text-white"
+          >
+            Log out
+          </button>
         </div>
-        <button
-          onClick={handleLogout}
-          className="text-sm text-white/50 hover:text-white"
-        >
-          Log out
-        </button>
+
+        <nav className="flex flex-wrap gap-2">
+          {links.map((link) => (
+            <Link
+              key={link.to}
+              to={link.to}
+              className="rounded-full border border-white/15 px-4 py-1.5 text-sm text-white/70 transition hover:border-white/40 hover:text-white [&.active]:border-party-teal [&.active]:bg-party-teal/15 [&.active]:font-bold [&.active]:text-party-teal"
+            >
+              {link.label}
+            </Link>
+          ))}
+        </nav>
       </header>
+
       <Outlet />
     </div>
   )
