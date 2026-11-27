@@ -8,9 +8,9 @@ type Tier = RevealResult['tiers'][number]
 const slots = [2, 1, 3] as const
 
 const blockStyle = {
-    1: 'h-40 sm:h-56 bg-gradient-to-b from-gold-300 to-gold-500',
-    2: 'h-32 sm:h-44 bg-gradient-to-b from-slate-200 to-slate-400',
-    3: 'h-24 sm:h-32 bg-gradient-to-b from-orange-300 to-orange-600',
+    1: 'h-44 sm:h-60 bg-gradient-to-b from-gold-300 to-gold-500',
+    2: 'h-36 sm:h-48 bg-gradient-to-b from-slate-200 to-slate-400',
+    3: 'h-28 sm:h-36 bg-gradient-to-b from-orange-300 to-orange-600',
 } as const
 
 const medals = { 1: '🥇', 2: '🥈', 3: '🥉' } as const
@@ -18,9 +18,10 @@ const medals = { 1: '🥇', 2: '🥈', 3: '🥉' } as const
 type Props = {
     tiers: Tier[]
     shown: number // how many steps have been revealed so far (from the bottom)
+    totalVotes: number
 }
 
-export function Podium({ tiers, shown }: Props) {
+export function Podium({ tiers, shown, totalVotes }: Props) {
     const firstVisibleIndex = tiers.length - shown
 
     return (
@@ -78,7 +79,7 @@ export function Podium({ tiers, shown }: Props) {
                         >
                             <span className="text-3xl sm:text-4xl">{medals[rank]}</span>
                             {revealed ? (
-                                <VoteTally votes={tier.votes} />
+                                <VoteTally votes={tier.votes} totalVotes={totalVotes} />
                             ) : (
                                 <span className="font-display text-3xl font-extrabold">?</span>
                             )}
