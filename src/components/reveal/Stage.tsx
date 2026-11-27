@@ -137,7 +137,11 @@ export function RevealStage({ category, onClose }: Props) {
 
                 {phase === 'show' && result && (
                     <div className="mt-10 w-full">
-                        <Podium tiers={result.tiers} shown={shown} />
+                        <Podium
+                            tiers={result.tiers}
+                            shown={shown}
+                            totalVotes={result.totalVotes}
+                        />
 
                         {finished && (
                             <div className="mt-10 animate-rise motion-reduce:animate-none">
